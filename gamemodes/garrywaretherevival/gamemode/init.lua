@@ -490,6 +490,7 @@ function GM:WareRoomCheckup()
 end
 
 function GM:InitPostEntity( )
+	print("GameInitialzied")
 	self.BaseClass:InitPostEntity()
 	
 	self:WareRoomCheckup()
@@ -565,7 +566,7 @@ function IncludeMinigames()
 	local authors = {}
 	local str = ""
 	
-	for _, file in pairs( file.Find("gamemodes/garryware13/gamemode/wareminigames/*.lua", "GAME")) do
+	for _, file in pairs( file.Find("gamemodes/garrywaretherevival/gamemode/wareminigames/*.lua", "GAME")) do
 		WARE = {}
 		
 		include("wareminigames/"..file)

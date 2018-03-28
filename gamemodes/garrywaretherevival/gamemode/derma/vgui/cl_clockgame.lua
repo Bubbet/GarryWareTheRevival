@@ -49,6 +49,7 @@ end
    Name: PerformLayout
 ---------------------------------------------------------*/
 function PANEL:Paint()	
+	if(type(gws_TimeWhenGameEnds)=="boolean"){gws_TimeWhenGameEnds = 20}
 	surface.SetTexture( self.ClockTexID )
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.DrawTexturedRectRotated( ScrW() - 24, ScrH() - 18 , 64, 64, 0 + self.StartAngle )

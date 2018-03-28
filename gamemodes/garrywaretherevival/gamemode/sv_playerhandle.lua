@@ -13,6 +13,7 @@ end
 
 function GM:PlayerInitialSpawn( ply, id )
 	self.BaseClass:PlayerInitialSpawn( ply, id )
+	print("PlayerSpawned!")
 	
 	ply.m_tokens = {}
 
