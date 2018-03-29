@@ -118,6 +118,8 @@ end
 -- Ware cycles.
 
 function GM:PickRandomGame()
+	--if (self.NextGameName==nil){self:PickRandomGameName(true)}
+	
 	self.WareHaveStarted = true
 	self.WareOverrideAnnouncer = false
 

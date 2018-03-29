@@ -65,8 +65,8 @@ function WARE:Think( )
 			--if ent == GetWorldEntity() then
 			if ent == game.GetWorld() then
 				ply:ApplyLose()
-				ply:SimulateDeath( Vector(0, 0, -1) * 10^3 )
-				ply:EjectWeapons( Vector(0, 0, 1) * 100, 120)
+				ply:SimulateDeath()-- Vector(0, 0, -1) * 10^3 )
+				--ply:EjectWeapons( Vector(0, 0, 1) * 100, 120)
 			end
 			
 			
