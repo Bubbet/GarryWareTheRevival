@@ -67,7 +67,7 @@ function WARE:Initialize()
 		GAMEMODE:MakeAppearEffect(pos)
 	end
 	
-	self.TimeToGuess = 2.1 + (#self.Numbers / 7) * 0.2
+	self.TimeToGuess = 2.51 + (#self.Numbers / 7) * 0.2
 	
 
 	GAMEMODE:SetWareWindupAndLength(#self.Numbers * 0.2, self.TimeToGuess )

@@ -26,7 +26,7 @@ function WARE:Initialize()
 	self.Tempo = math.random( 40, 70 )
 	self.NumberSpawns = math.random( 4, 5 )
 	
-	self.TolerenceSeconds = 0.5
+	self.TolerenceSeconds = 1
 	self.TolerenceSecondsBound = self.TolerenceSeconds/2
 
 	GAMEMODE:SetWareWindupAndLength(60/self.Tempo*self.TestTempo, 60/self.Tempo*(self.NumberSpawns+1))
