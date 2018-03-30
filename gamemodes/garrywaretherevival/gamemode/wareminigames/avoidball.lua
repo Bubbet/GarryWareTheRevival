@@ -17,7 +17,7 @@ function WARE:Initialize()
 end
 
 function WARE:StartAction()
-	local ratio = 1.1
+	local ratio = 2.2 --1.1
 	local minimum = 3
 	local num = math.Clamp(math.ceil(team.NumPlayers(TEAM_HUMANS)*ratio), minimum, 64)
 	local entposcopy = GAMEMODE:GetRandomLocations(num, ENTS_INAIR)

@@ -27,7 +27,7 @@ function WARE:Initialize()
 	GAMEMODE:SetWareWindupAndLength(3,5)
 	
 	GAMEMODE:SetPlayersInitialStatus( false )
-	GAMEMODE:DrawInstructions( "Pick up that can!" )
+	GAMEMODE:DrawInstructions( "Pick up that can!" )	
 	
 	local numberSpawns = math.Clamp(team.NumPlayers(TEAM_HUMANS),1,table.Count(GAMEMODE:GetEnts(ENTS_INAIR)))
 
@@ -43,6 +43,7 @@ function WARE:Initialize()
 		prop:Spawn()
 		
 		prop.IsCan = true
+		prop:EmitSound("npc/metropolice/vo/pickupthecan1.wav")
 		
 		util.SpriteTrail(prop,0,self.TrailColor,false,1.2,2.2,5,1/((1.2+2.2)*0.5),"trails/physbeam.vmt")
 		
@@ -87,6 +88,8 @@ function WARE:StartAction()
 		local newpos = v - Vector(0,0,obbmins.z)
 		trash:SetPos(newpos)
 		trash:SetMoveType(MOVETYPE_NONE)
+		
+		trash:EmitSound("npc/metropolice/vo/putitinthetrash1.wav")
 		
 		GAMEMODE:AppendEntToBin(trash)
 		table.insert(self.Trashcans,trash)
