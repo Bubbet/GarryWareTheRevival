@@ -14,7 +14,7 @@ function WARE:StartAction()
 	local angle = nil
 	for k,ply in pairs(team.GetPlayers(TEAM_HUMANS)) do
 		angle = ply:EyeAngles()
-		ply:SetEyeAngles( Angle( angle.p, angle.y, 180 ) )
+		ply:SetEyeAngles( Angle( angle.p, angle.y, math.random(70,200) ) )
 	end
 	
 end

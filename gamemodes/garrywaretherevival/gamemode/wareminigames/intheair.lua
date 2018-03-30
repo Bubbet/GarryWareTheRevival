@@ -4,7 +4,11 @@ WARE.Room = "empty"
 function WARE:Initialize()
 
 	self.IsTrap = (math.random(0,10) <= 3)
-	if !self.IsTrap then
+	if self.IsTrap <=1 then	
+		GAMEMODE:SetWareWindupAndLength(2, math.Rand(1.3, 1.5))
+		GAMEMODE:SetWinAwards( AWARD_REFLEX )
+	
+	elseif !self.IsTrap then
 		GAMEMODE:SetWareWindupAndLength(2, math.Rand(1.3, 5.0))
 		GAMEMODE:SetWinAwards( AWARD_REFLEX )
 		
@@ -23,7 +27,10 @@ function WARE:Initialize()
 end
 
 function WARE:StartAction()
-	if !self.IsTrap then
+	if self.IsTrap <=1 then	
+		GAMEMODE:DrawInstructions( "Don't move!" )
+	
+	elseif !self.IsTrap then
 		GAMEMODE:DrawInstructions( "Be high in the air!" )
 		
 	else
@@ -45,7 +52,10 @@ end
 
 function WARE:Think( )
 	for _,ply in pairs(team.GetPlayers(TEAM_HUMANS)) do
-		if !self.IsTrap then
+		if self.IsTrap <=1 then	
+			ply:SetAchievedNoLock( ply:GetVelocity():Length() < 16 )
+	
+		elseif !self.IsTrap then
 			ply:SetAchievedNoLock( ply:GetPos().z > self.zcap )
 		
 		else
