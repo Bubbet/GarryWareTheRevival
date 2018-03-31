@@ -72,7 +72,7 @@ function SWEP:PrimaryAttack()
 	if (CLIENT) then return end
 	self:Throw( self.ProjectileForce )
 	
-	timer.Simple(self.Owner():GetPos():Distance(self.OHS)/50,function()
+	timer.Simple(self.Owner():GetShootPos():Distance(self.OHS)/100, function()
 		for _,ent in pairs(team.GetPlayers(TEAM_HUMANS)) do
 			if ent:GetPos():Distance(self.OHS) <= 80 then
 				ent:SetGroundEntity( NULL )
