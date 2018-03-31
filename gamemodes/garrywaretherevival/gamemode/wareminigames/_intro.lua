@@ -33,7 +33,7 @@ local function spawnModel( iModel , modelCount , delay )
 	ent:SetPos( pos )
 	ent:SetAngles( VectorRand():Angle() )
 	ent:Spawn()
-	ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
+	--ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
 	local physObj = ent:GetPhysicsObject()
 	if physObj:IsValid() then
 		physObj:ApplyForceCenter( VectorRand() * math.random( 256, 468 ) * physObj:GetMass() )
