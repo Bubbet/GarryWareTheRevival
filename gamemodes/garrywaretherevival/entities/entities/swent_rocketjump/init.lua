@@ -48,16 +48,17 @@ function ENT:PhysicsCollide( data, physobj )
 	/*for _,ent in pairs(ents.FindInSphere(self.Entity:GetPos(),64)) do
 		if ent:IsPlayer() == true then
 			ent:SetGroundEntity( NULL )
-			ent:SetVelocity(ent:GetVelocity() + (ent:GetPos() - self.Entity:GetPos()):GetNormalized() * 350)
+			ent:SetVelocity((ent:GetPos() - self.Entity:GetPos())*1000)--ent:GetVelocity() + (ent:GetPos() - self.Entity:GetPos()):GetNormalized() * 1350 + Vector(0,0,1000))
 		end
 	end*/
 
 	--New code from BlackOps
-	for i,v in ipairs(ents.FindInSphere( self.Entity:GetPos(), 60 )) do
+	/*for i,v in ipairs(ents.FindInSphere( self.Entity:GetPos(), 60 )) do
 		if(v == self.Entity:GetOwner()) then
-			v:SetVelocity(v:GetAimVector() * -500, 0)
+			v:SetVelocity(v:GetAimVector() * -2500 - Vector(0,0,1500))
 		end
 	end
+	*/
 	self.Entity:Remove()
 end 
 

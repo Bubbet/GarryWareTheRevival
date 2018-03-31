@@ -71,6 +71,14 @@ function SWEP:PrimaryAttack()
 	
 	if (CLIENT) then return end
 	self:Throw( self.ProjectileForce )
+	
+	for _,ent in pairs(team.GetPlayers(TEAM_HUMANS)) do
+		if ent:GetPos():Distance(self.OHS) <= 80 then
+			ent:SetGroundEntity( NULL )
+			self.DoVel = (ent:GetPos() - self.OHS)*Vector(100,100,10)
+			ent:SetVelocity(self.DoVel)
+		end
+	end
 end
 
 SWEP.Secondary.ClipSize = -1
@@ -79,4 +87,8 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
 function SWEP:SecondaryAttack()
+end
+
+function SWEP:Think()
+	self.OHS = self.Owner:GetEyeTraceNoCursor().HitPos + Vector(0,0,-10)
 end

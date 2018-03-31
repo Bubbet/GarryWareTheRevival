@@ -43,7 +43,10 @@ function WARE:Initialize()
 		prop:Spawn()
 		
 		prop.IsCan = true
-		prop:EmitSound("npc/metropolice/vo/pickupthecan1.wav")
+		
+		for _,ply in pairs(team.GetPlayers(TEAM_HUMANS)) do
+			ply:EmitSound("npc/metropolice/vo/pickupthecan1.wav")
+		end
 		
 		util.SpriteTrail(prop,0,self.TrailColor,false,1.2,2.2,5,1/((1.2+2.2)*0.5),"trails/physbeam.vmt")
 		
@@ -88,8 +91,10 @@ function WARE:StartAction()
 		local newpos = v - Vector(0,0,obbmins.z)
 		trash:SetPos(newpos)
 		trash:SetMoveType(MOVETYPE_NONE)
-		
-		trash:EmitSound("npc/metropolice/vo/putitinthetrash1.wav")
+
+		for _,ply in pairs(team.GetPlayers(TEAM_HUMANS)) do
+			ply:EmitSound("npc/metropolice/vo/putitinthetrash1.wav")
+		end		
 		
 		GAMEMODE:AppendEntToBin(trash)
 		table.insert(self.Trashcans,trash)
