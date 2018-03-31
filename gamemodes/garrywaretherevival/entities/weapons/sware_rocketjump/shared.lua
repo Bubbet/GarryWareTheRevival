@@ -61,18 +61,19 @@ function SWEP:PrimaryAttack()
 
 	self:Throw( self.ProjectileForce )
 	
-	for _,ent in pairs(team.GetPlayers(TEAM_HUMANS)) do
-		if ent:GetPos():Distance(self.OHS) <= 80 then
-			ent:SetGroundEntity( NULL )
-			if ent == self.Owner then
-			self.DoVel = (ent:GetPos() - self.OHS)*Vector(10,10,10)
-			else
-			self.DoVel = (ent:GetPos() - self.OHS)*Vector(100,100,10)
+	timer.Simple(self.Owner():GetPos():Distance(self.OHS)/50,function()
+		for _,ent in pairs(team.GetPlayers(TEAM_HUMANS)) do
+			if ent:GetPos():Distance(self.OHS) <= 80 then
+				ent:SetGroundEntity( NULL )
+				if ent == self.Owner then
+				self.DoVel = (ent:GetPos() - self.OHS)*Vector(10,10,10)
+				else
+				self.DoVel = (ent:GetPos() - self.OHS)*Vector(100,100,10)
+				end
+				ent:SetVelocity(self.DoVel)
 			end
-			ent:SetVelocity(self.DoVel)
 		end
 	end
-	
 end
 
 SWEP.Secondary.ClipSize = -1
