@@ -118,8 +118,8 @@ function WARE:Think( )
 		if target:IsPlayer() and target:IsWarePlayer() and !target:GetLocked() then
 			local dir = (target:GetPos() + Vector(0, 0, 128) - ring:GetPos()):GetNormalized()
 			target:ApplyLose()
-			target:SimulateDeath( dir * 100 )
-			target:EjectWeapons( dir * 200, 100 ) 
+			target:SimulateDeath( dir * 10 )
+			target:EjectWeapons( dir * 20, 10 ) 
 		end
 		
 		

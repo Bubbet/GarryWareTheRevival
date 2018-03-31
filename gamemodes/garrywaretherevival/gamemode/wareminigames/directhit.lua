@@ -66,8 +66,8 @@ function WARE:Think( )
 			if (calctor - bactor):Length() > self.CircleRadius then
 				v:ApplyLose( )
 				local dir = (self.CenterPos - v:GetPos() + Vector(0,0,100))
-				v:SimulateDeath( dir * 10000)
-				v:EjectWeapons(dir * 300, 100)
+				v:SimulateDeath( dir * 10)
+				v:EjectWeapons(dir * 30, 10)
 				
 				v:EmitSound("ambient/levels/labs/electric_explosion1.wav")
 				
