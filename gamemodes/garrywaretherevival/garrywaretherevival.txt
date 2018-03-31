@@ -1,7 +1,7 @@
 "garrywaretherevival"
 {
     "base"              "fretta13"
-	"title"		        "GarryWare: The Revival"
+	"title"		        "Garry Ware: The Revival"
     "menusystem"		"1"	
 	"maps"              "^wa_"
 	
