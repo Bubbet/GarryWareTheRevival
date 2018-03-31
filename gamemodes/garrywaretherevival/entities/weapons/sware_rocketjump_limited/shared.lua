@@ -84,7 +84,7 @@ function SWEP:PrimaryAttack()
 				ent:SetVelocity(self.DoVel)
 			end
 		end
-	end
+	end)
 end
 
 SWEP.Secondary.ClipSize = -1
