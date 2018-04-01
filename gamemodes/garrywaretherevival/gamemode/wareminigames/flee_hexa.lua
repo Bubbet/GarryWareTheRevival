@@ -14,7 +14,7 @@ function WARE:GetModelList()
 	return self.Models
 end
 
-local possiblenpcs = { "npc_manhack" , "npc_rollermine" }
+local possiblenpcs = { "npc_manhack" , "npc_rollermine" , "npc_antlionguard"}
 
 function WARE:FlashSpawns( iteration, delay )
 	for k,pos in pairs( self.Positions ) do

@@ -1,9 +1,20 @@
 WARE.Author = "Kilburn"
+WARE.Room = "empty"
 
 //Temporary disable
 function WARE:IsPlayable()
-        return false
+        return true
 end
+
+WARE.Models = {
+"models/props_junk/watermelon01.mdl"
+"models/props_wasteland/laundry_cart001.mdl"
+ }
+ 
+ function WARE:GetModelList()
+	return self.Models
+end
+
 
 local function RemoveCartVictory(cart)
         if cart and cart:IsValid() then
@@ -44,7 +55,7 @@ function WARE:Initialize()
         self.DelayBetweenMelons = 0.3 * (1.5 + self.NumMelonSpawns - (numPlayers*0.2))
         
         GAMEMODE:SetWareWindupAndLength(5,acttime)
-        GAMEMODE:DrawPlayersTextAndInitialStatus("Grab a laundry cart...",0)
+        GAMEMODE:DrawInstructions("Grab a laundry cart...")
         
         -- HAXX
         -- GravGunOnPickedUp hook is broken, so we'll use this tricky workaround
@@ -82,7 +93,7 @@ function WARE:Initialize()
 end
 
 function WARE:StartAction()
-        GAMEMODE:DrawPlayersTextAndInitialStatus("Catch "..self.NumHarvest.." melons without dropping your cart ! ",0)
+        GAMEMODE:DrawInstructions("Catch "..self.NumHarvest.." melons without dropping your cart ! ")
         self.NextMelonSpawn = 0
         self.NextMelonCleanup = 0
         
