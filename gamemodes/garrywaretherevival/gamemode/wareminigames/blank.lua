@@ -14,8 +14,8 @@ function WARE:StartAction()
 	GAMEMODE:DrawInstructions( "Displayed When Ware Starts" )
 end
 
-function WARE:EndAction()	
-	GAMEMODE:DrawInstructions( "Displayed When Ware Ends", Color(255,255,255,255) )
+function WARE:EndAction()	--text, background, foreground/textcolor
+	GAMEMODE:DrawInstructions( "Displayed When Ware Ends", Color(255,255,255,255) , Color(200,200,200,255))
 end
 
 function WARE:PlayerSay(ply, text, say)
