@@ -132,7 +132,15 @@ function WARE:StartAction()
 end
 
 function WARE:EndAction()
-
+	for _,v in pairs(team.GetPlayers(TEAM_HUMANS)) do
+		if v.Won then
+			v:ApplyWin()
+			v:StripWeapons()
+		else
+			v:ApplyLose()
+			v:StripWeapons()
+		end
+	end
 end
 
 function WARE:EntityTakeDamage(ent,info)
@@ -147,7 +155,7 @@ function WARE:EntityTakeDamage(ent,info)
 	
 	local rp = att
 	if self.WinnerID  == ent.CrateID then
-		att:ApplyWin()
+		att.Won = true
 		
 		for i=1,#self.PossibleColours do
 			if (i == self.WinnerID) then
@@ -171,7 +179,7 @@ function WARE:EntityTakeDamage(ent,info)
 			end
 		end
 	else
-		att:ApplyLose( )
+		att.Won = false
 		
 		for i=1,#self.PossibleColours do
 			if (i == self.WinnerID) then

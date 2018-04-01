@@ -116,7 +116,10 @@ end
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
 -- Ware cycles.
-
+concommand.Add("gw_infinite", function(ply, stringargs, args)
+	GAMEMODE.GameLength = (9.0 + 47.0 / 60.0)*(1-args[1])+args[1]*1000000000 
+	GAMEMODE.RoundLength = (5.0 * 60.0)*(1-args[1])+args[1]*1000000000
+end)
 concommand.Add("gw_pickgame", 
 	function(ply, cmd, args)
 		print("Changing Minigame To: " .. args[1])
@@ -158,6 +161,7 @@ function GM:PickGame(Game)
 
 	self.WarePhase_Current = 1
 	self.WarePhase_NextLength = 0
+	self:SetNextGameStartsIn(3)
 	
 	self:ResetWareAwards( )
 	
@@ -182,7 +186,7 @@ function GM:PickGame(Game)
 		GAMEMODE:DrawInstructions( "Error with minigame \""..self.NextGameName.."\"." )
 	end
 	
-	self.NextgameEnd = CurTime() + self.Windup + self.WareLen
+	self.NextgameEnd = CurTime() + self.Windup + self.WareLen + 3
 	
 	self.NumberOfWaresPlayed = self.NumberOfWaresPlayed + 1
 	

@@ -1,7 +1,7 @@
 "garrywaretherevival"
 {
     "base"              "fretta13"
-	"title"		        "Garry Ware: The Revival"
+	"title"		        "GarryWare: The Revival"
     "menusystem"		"1"	
 	"maps"              "^wa_"
 	
@@ -14,4 +14,15 @@
 	
 	"author_name"	"GarryWare authors and GitHub Updaters"
 	
+	"settings"
+	{
+		1
+		{
+			"name"		"gw_infinite"
+			"text"		"Infinite"
+			"help"		"If enabled, the GarryWare Game will last forever."
+			"type"		"CheckBox"
+			"default"	"0"
+		}
+	}
 }

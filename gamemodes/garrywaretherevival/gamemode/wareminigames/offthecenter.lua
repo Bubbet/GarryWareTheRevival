@@ -85,7 +85,7 @@ function WARE:Think( )
 		if !v:GetLocked() and (v:GetPos().z < self.HeightLimit) then
 			v:ApplyLose( )
 			v:SimulateDeath( )
-			v:EjectWeapons(nil, 100)
+			v:StripWeapons( )
 		end
 	end
 	
@@ -118,8 +118,8 @@ function WARE:Think( )
 		if target:IsPlayer() and target:IsWarePlayer() and !target:GetLocked() then
 			local dir = (target:GetPos() + Vector(0, 0, 128) - ring:GetPos()):GetNormalized()
 			target:ApplyLose()
-			target:SimulateDeath( dir * 10 )
-			target:EjectWeapons( dir * 20, 10 ) 
+			target:SimulateDeath( )
+			target:StripWeapons( ) 
 		end
 		
 		

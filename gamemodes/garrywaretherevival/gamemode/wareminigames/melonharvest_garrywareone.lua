@@ -52,12 +52,12 @@ function WARE:Initialize()
     --HAXX
     --GravGunOnPickedUp hook is broken, so we'll use this tricky workaround
     local lua_run1 = ents.Create("lua_run")
-    lua_run1:SetKeyValue('Code','CALLER:SetColor(255,255,255,100);CALLER.CartOwner=ACTIVATOR;ACTIVATOR.Cart=CALLER')
+    lua_run1:SetKeyValue('Code','CALLER:SetColor(Color(255,255,255,100));CALLER.CartOwner=ACTIVATOR;ACTIVATOR.Cart=CALLER')
     lua_run1:SetKeyValue('targetname','luarun1')
     lua_run1:Spawn()
     
     local lua_run2 = ents.Create("lua_run")
-    lua_run2:SetKeyValue('Code','CALLER:SetColor(255,255,255,255);CALLER.CartOwner=nil;ACTIVATOR.Cart=nil')
+    lua_run2:SetKeyValue('Code','CALLER:SetColor(Color(255,255,255,255));CALLER.CartOwner=nil;ACTIVATOR.Cart=nil')
     lua_run2:SetKeyValue('targetname','luarun2')
     lua_run2:Spawn()
     
@@ -68,10 +68,11 @@ function WARE:Initialize()
             cart:PhysicsInit(SOLID_VPHYSICS)
             cart:SetMoveType(MOVETYPE_VPHYSICS)
             cart:SetSolid(SOLID_VPHYSICS)
-			cart:SetRenderMode(RENDERMODE_TRANSALPHA)
             cart:SetPos(pos+Vector(0,0,100))
             cart:SetAngles(Angle(0,math.random(-180,180),0))
             cart:Spawn()
+			cart:SetRenderMode(RENDERMODE_TRANSALPHA)
+			--cart:SetColor(Color(255,255,255,100))
             
             cart:Fire("AddOutput", "OnPhysGunOnlyPickup luarun1,RunCode")
             cart:Fire("AddOutput", "OnPhysGunDrop luarun2,RunCode")
@@ -153,14 +154,14 @@ function WARE:Think()
         end
         
         if CurTime()>self.NextMelonCleanup then
-                for _,v in pairs(ents.FindByModel("models/props_junk/watermelon01.mdl")) do
-                        if math.abs(v:GetPhysicsObject():GetVelocity().x)<0.1 and
-                           math.abs(v:GetPhysicsObject():GetVelocity().y)<0.1 and
-                           math.abs(v:GetPhysicsObject():GetVelocity().z)<0.1 then
-                                GAMEMODE:MakeDisappearEffect(v:GetPos())
-                                v:Remove()
-                        end
-                end
-                self.NextMelonCleanup = CurTime() + 3
+            for _,v in pairs(ents.FindByModel("models/props_junk/watermelon01.mdl")) do
+                    if math.abs(v:GetPhysicsObject():GetVelocity().x)<0.1 and
+                       math.abs(v:GetPhysicsObject():GetVelocity().y)<0.1 and
+                       math.abs(v:GetPhysicsObject():GetVelocity().z)<0.1 then
+                            GAMEMODE:MakeDisappearEffect(v:GetPos())
+                            v:Remove()
+                    end
+            end
+            self.NextMelonCleanup = CurTime() + 3
         end
 end
