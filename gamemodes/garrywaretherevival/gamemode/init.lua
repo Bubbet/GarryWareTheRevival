@@ -117,9 +117,42 @@ end
 ////////////////////////////////////////////////
 -- Ware cycles.
 
-concommand.Add("gw_pickgame", GM:PickGame(args))
-function GM:PickGame(game)
+concommand.Add("gw_pickgame", 
+	function(ply, cmd, args)
+		print("Changing Minigame To: " .. args[1])
+		GAMEMODE:PickGame(args[1]); 
+	end,
+	function(args, stringargs) 
+		local tbl = {}
+		stringargs = string.Trim( stringargs )
+		stringargs = string.lower( stringargs )
+		for k, v in pairs(ware_mod.GetNamesTable()) do
+			if string.find( string.lower( v ), stringargs ) then
+				local nick = "\"" .. v .. "\""
+				nick = "gw_pickgame " .. v
+	
+				table.insert( tbl, nick )
+			else
+				--table.insert( tbl, "gw_pickgame " .. v )
+			end
+		end
+		return tbl
+	end,
+	"Used to force-change current garryware minigame. Usage: gw_pickgame warename"
+)
+function GM:PickGame(Game)
+	
+	GAMEMODE:EndGame()
+	
+	self.NextGameName = Game
+	--self.NextgameStart = 1 + self.WADAT.TransitFlourishTime
+	
+	local env = ware_env.FindEnvironment(ware_mod.Get(Game).Room) or self.CurrentEnvironment
+	self.CurrentEnvironment = env
+	
+	self:RespawnAllPlayers(false, true)
 
+	
 	self.WareHaveStarted = true
 	self.WareOverrideAnnouncer = false
 
@@ -135,7 +168,6 @@ function GM:PickGame(game)
 		v:StripWeapons()
 	end
 	
-	self.NextGameName = game
 	self.Minigame = ware_mod.CreateInstance(self.NextGameName)
 	
 	-- Ware is initialized
@@ -149,6 +181,7 @@ function GM:PickGame(game)
 		GAMEMODE:SetPlayersInitialStatus( false )
 		GAMEMODE:DrawInstructions( "Error with minigame \""..self.NextGameName.."\"." )
 	end
+	
 	self.NextgameEnd = CurTime() + self.Windup + self.WareLen
 	
 	self.NumberOfWaresPlayed = self.NumberOfWaresPlayed + 1
