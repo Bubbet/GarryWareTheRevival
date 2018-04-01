@@ -117,6 +117,101 @@ end
 ////////////////////////////////////////////////
 -- Ware cycles.
 
+concommand.Add("gw_pickgame", 
+	function(ply, cmd, args)
+		print("Changing Minigame To: " .. args[1])
+		GAMEMODE:PickGame(args[1]); 
+	end,
+	function(args, stringargs) 
+		local tbl = {}
+		stringargs = string.Trim( stringargs )
+		stringargs = string.lower( stringargs )
+		for k, v in pairs(ware_mod.GetNamesTable()) do
+			if string.find( string.lower( v ), stringargs ) then
+				local nick = "\"" .. v .. "\""
+				nick = "gw_pickgame " .. v
+	
+				table.insert( tbl, nick )
+			else
+				--table.insert( tbl, "gw_pickgame " .. v )
+			end
+		end
+		return tbl
+	end,
+	"Used to force-change current garryware minigame. Usage: gw_pickgame warename"
+)
+function GM:PickGame(Game)
+	
+	GAMEMODE:EndGame()
+	
+	self.NextGameName = Game
+	--self.NextgameStart = 1 + self.WADAT.TransitFlourishTime
+	
+	local env = ware_env.FindEnvironment(ware_mod.Get(Game).Room) or self.CurrentEnvironment
+	self.CurrentEnvironment = env
+	
+	self:RespawnAllPlayers(false, true)
+
+	
+	self.WareHaveStarted = true
+	self.WareOverrideAnnouncer = false
+
+	self.WarePhase_Current = 1
+	self.WarePhase_NextLength = 0
+	
+	self:ResetWareAwards( )
+	
+	-- Standard initialization
+	for k,v in pairs(player.GetAll()) do 
+		v:SetLockedSpecialInteger(0)
+		v:RemoveFirst( )
+		v:StripWeapons()
+	end
+	
+	self.Minigame = ware_mod.CreateInstance(self.NextGameName)
+	
+	-- Ware is initialized
+	if self.Minigame and self.Minigame.Initialize and self.Minigame.StartAction then
+		self.Minigame:Initialize()
+		
+	else
+		self.Minigame = ware_mod.CreateInstance("_empty")
+		self:SetWareWindupAndLength(0, 3)
+		
+		GAMEMODE:SetPlayersInitialStatus( false )
+		GAMEMODE:DrawInstructions( "Error with minigame \""..self.NextGameName.."\"." )
+	end
+	
+	self.NextgameEnd = CurTime() + self.Windup + self.WareLen
+	
+	self.NumberOfWaresPlayed = self.NumberOfWaresPlayed + 1
+	
+	if !self.WareOverrideAnnouncer then
+		self.WareOverrideAnnouncer = self.DefaultAnnouncerID or math.random(1, 2)
+	end
+	
+	local iLoopToPlay = ( (self.Windup + self.WareLen) >= 10 ) and 2 or 1
+
+
+	local newWindup = CurTime() + self.Windup
+	
+	-- Send info about ware
+	netstream.Start(team.GetPlayers(TEAM_HUMANS), "NextGameTimes", {
+		newWindup,
+		self.NextgameEnd,
+		self.Windup,
+		self.WareLen,
+		self.WareShouldNotAnnounce,
+		true,
+		2,
+		math.random(1, 5),
+		self.WareOverrideAnnouncer,
+		iLoopToPlay
+	})
+
+	self.WareShouldNotAnnounce = false
+end
+
 function GM:PickRandomGame()
 	--if (self.NextGameName==nil){self:PickRandomGameName(true)}
 	
