@@ -251,6 +251,7 @@ function GM:PickRandomGame()
 		self:SetWareWindupAndLength(0, 3)
 		
 		GAMEMODE:SetPlayersInitialStatus( false )
+		if self.NextGameName == nil then self.NextGameName = "nil" end
 		GAMEMODE:DrawInstructions( "Error with minigame \""..self.NextGameName.."\"." )
 	end
 	self.NextgameEnd = CurTime() + self.Windup + self.WareLen

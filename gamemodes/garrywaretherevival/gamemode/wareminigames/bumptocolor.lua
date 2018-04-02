@@ -5,8 +5,8 @@ WARE.Room = "empty"
 WARE.CircleRadius = 64
 
 WARE.Circles = {}
-WARE.ColorNames = {"Red", "Green", "Blue", "Orange", "Pink", "Yellow", "Cyan", "Purple", "Light Blue"}
-WARE.Colors = {Color(255,0,0), Color(0,255,0), Color(0,0,255), Color(255,125,0), Color(255, 0, 255), Color(255, 255, 0), Color(0, 255, 255), Color(125,0,255), Color(0,125,255)}
+WARE.ColorNames = {"Red", "Green", "Blue", "Orange", "Pink", "Yellow", "Cyan", "Purple", "Grey"}
+WARE.Colors = {Color(255,0,0), Color(0,255,0), Color(0,0,255), Color(255,125,0), Color(255, 0, 255), Color(255, 255, 0), Color(0, 255, 255), Color(125,0,255), Color(125,125,125)}
 
 function WARE:PickColor(ply)
 	--if self.IsActive then
@@ -27,7 +27,7 @@ function WARE:PickColor(ply)
 			ply.targetcolorid = targetcolorid
 		end
 		
-		GAMEMODE:DrawInstructions( "You have bounced: " .. ply.successfulbumps .. " times! " .. ply.keepbouncing .. " Goto color: " .. self.ColorNames[ply.targetcolorid], self.Colors[ply.targetcolorid], Color(255,255,255,255), {ply} )
+		GAMEMODE:DrawInstructions( "You have bounced: " .. ply.successfulbumps .. "/" .. self.targetbumps .. " times! " .. ply.keepbouncing .. " Goto color: " .. self.ColorNames[ply.targetcolorid], self.Colors[ply.targetcolorid], Color(255,255,255,255), {ply} )
 		--self.targetcolorid = math.ceil(math.random(1,#self.Colors))
 		
 		-- local plypf = RecipientFilter()
@@ -54,7 +54,7 @@ function WARE:Initialize()
 
 	self.targetbumps = math.ceil(math.random(2,5))
 	
-	GAMEMODE:SetWareWindupAndLength(4, 4*self.targetbumps)
+	GAMEMODE:SetWareWindupAndLength(6, 4*self.targetbumps)
 
 	
 	GAMEMODE:SetPlayersInitialStatus( true )
@@ -67,33 +67,37 @@ function WARE:Initialize()
 	
 	self.LastThinkDo = 0
 	
-	local ratio = 1
-	local num = #GAMEMODE:GetEnts({"dark_ground","light_ground"}) * ratio
-	local entposcopy = GAMEMODE:GetRandomLocations(num, {"dark_ground","light_ground"} )
+	timer.Simple(2, 
+		function()
+			local ratio = 1
+			local num = #GAMEMODE:GetEnts({"dark_ground","light_ground"}) * ratio
+			local entposcopy = GAMEMODE:GetRandomLocations(num, {"dark_ground","light_ground"} )
+			
+			for k,v in pairs(entposcopy) do
+				local ent = ents.Create("ware_ringzone")
+				local colorid = math.ceil(math.random(1,#self.Colors))
+				ent:SetPos(v:GetPos() + Vector(0,0,4) )
+				ent:SetAngles(Angle(0,0,0))
+				ent:SetZColor(self.Colors[colorid])
+				ent:SetZSize(128)
+				ent:Spawn()
+				ent:Activate()
+				
+				ent.colorid = colorid
+				
+				GAMEMODE:AppendEntToBin(ent)
+				
+				ent.LastActTime = 0
+				
+				table.insert( self.Circles , ent )
+		
+				GAMEMODE:AppendEntToBin(ent)
+				GAMEMODE:MakeAppearEffect(ent:GetPos())
+			end
+		end
+	)
 	
-	for k,v in pairs(entposcopy) do
-		local ent = ents.Create("ware_ringzone")
-		local colorid = math.ceil(math.random(1,#self.Colors))
-		ent:SetPos(v:GetPos() + Vector(0,0,4) )
-		ent:SetAngles(Angle(0,0,0))
-		ent:SetZColor(self.Colors[colorid])
-		ent:SetZSize(128)
-		ent:Spawn()
-		ent:Activate()
-		
-		ent.colorid = colorid
-		
-		GAMEMODE:AppendEntToBin(ent)
-		
-		ent.LastActTime = 0
-		
-		table.insert( self.Circles , ent )
-
-		GAMEMODE:AppendEntToBin(ent)
-		GAMEMODE:MakeAppearEffect(ent:GetPos())
-	end
-	
-	timer.Simple(1,
+	timer.Simple(3,
 		function()
 			for k,p in pairs(team.GetPlayers(TEAM_HUMANS)) do
 				p.successfulbumps = 0
@@ -103,7 +107,7 @@ function WARE:Initialize()
 		end
 	)
 	
-	timer.Simple(4, 
+	timer.Simple(6, 
 		function() 
 			self.IsActive = true
 		end
@@ -122,6 +126,7 @@ end
 
 function WARE:EndAction()
 	for _,v in pairs(team.GetPlayers(TEAM_HUMANS)) do
+		if v.successfulbumps == nil then return false end
 		if v.successfulbumps >= self.targetbumps then
 			v:ApplyWin()
 			v:StripWeapons()
@@ -160,10 +165,11 @@ function WARE:Think( )
 						ring.LastActTime = CurTime()
 						if target:IsPlayer() and target:IsWarePlayer() and !target:GetLocked() then
 							if (ring.colorid == target.oldcolorid) then
-								GAMEMODE:DrawInstructions( "You have bounced: " .. target.successfulbumps .. " times! " .. target.keepbouncing .. " Goto color: " .. self.ColorNames[target.targetcolorid], self.Colors[target.targetcolorid], Color(255,255,255,255), {target} )
+								GAMEMODE:DrawInstructions( "You have bounced: " .. target.successfulbumps .. "/" .. self.targetbumps .. " times! " .. target.keepbouncing .. " Goto color: " .. self.ColorNames[target.targetcolorid], self.Colors[target.targetcolorid], Color(255,255,255,255), {target} )
 							elseif !(ring.colorid == target.targetcolorid) then
 								target:ApplyLose()
 								target:SimulateDeath()
+								GAMEMODE:DrawInstructions( "You Failed, with " .. target.successfulbumps .. "/" .. self.targetbumps .. " bounces.", Color(255,0,0,255), Color(255,255,255,255), {target} )
 							else
 								target.oldcolorid = target.targetcolorid
 								target.successfulbumps = target.successfulbumps + 1
