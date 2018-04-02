@@ -5,28 +5,60 @@ WARE.Room = "empty"
 WARE.CircleRadius = 64
 
 WARE.Circles = {}
-WARE.ColorNames = {"Red", "Green", "Blue", "Orange", "Magenta", "Yellow", "Cyan", "Purple", "Aqua"}
-WARE.Colors = {Color(255,0,0), Color(0,255,0), Color(0,0,255), Color(255,125,0), Color(255, 0, 125), Color(125, 255, 0), Color(0, 255, 125), Color(125,0,255), Color(0,125,255)}
+WARE.ColorNames = {"Red", "Green", "Blue", "Orange", "Pink", "Yellow", "Cyan", "Purple", "Light Blue"}
+WARE.Colors = {Color(255,0,0), Color(0,255,0), Color(0,0,255), Color(255,125,0), Color(255, 0, 255), Color(255, 255, 0), Color(0, 255, 255), Color(125,0,255), Color(0,125,255)}
 
-function WARE:PickColor()
-	self.targetcolorid = math.ceil(math.random(1,#self.Colors))
-	GAMEMODE:DrawInstructions( "Goto color: " .. self.ColorNames[self.targetcolorid], self.Colors[self.targetcolorid])
-	if self.gameinprogress then
-		timer.Simple(2, function() self:PickColor() end)
-	end
+function WARE:PickColor(ply)
+	--if self.IsActive then
+		
+		ply.possiblecolors = {}
+		for k,p in pairs(ents.FindInSphere(ply:GetPos(),150)) do
+			if p:GetClass() == "ware_ringzone" then
+				table.insert(ply.possiblecolors, p.colorid)
+				--print(p.colorid)
+			end
+		end
+		local targetcolorid = ply.possiblecolors[math.ceil(math.random(1,#ply.possiblecolors))]
+		--print(ply.targetcolorid)
+		if targetcolorid == ply.oldcolorid then
+			self:PickColor(ply)
+			return false
+		else
+			ply.targetcolorid = targetcolorid
+		end
+		
+		GAMEMODE:DrawInstructions( "You have bounced: " .. ply.successfulbumps .. " times! " .. ply.keepbouncing .. " Goto color: " .. self.ColorNames[ply.targetcolorid], self.Colors[ply.targetcolorid], Color(255,255,255,255), {ply} )
+		--self.targetcolorid = math.ceil(math.random(1,#self.Colors))
+		
+		-- local plypf = RecipientFilter()
+		-- plypf:RemoveAllPlayers()
+		-- if team.NumPlayers(TEAM_HUMANS)>0 then print("PlayerAdded: "..team.GetPlayers(TEAM_HUMANS)[1]:GetName()); plypf:AddPlayer(team.GetPlayers(TEAM_HUMANS)[1]); end
+		-- print( "Filtered Players: "..plypf:GetCount() )
+		
+		-- plypf = { team.GetPlayers(TEAM_HUMANS)[1] }
+		
+		-- --GAMEMODE:DrawInstructions( "Goto color: " .. self.ColorNames[self.targetcolorid], self.Colors[self.targetcolorid])
+		-- GAMEMODE:DrawInstructions( "Yoshi is a big dumb dumb".."Goto color: " .. self.ColorNames[self.targetcolorid], Color(0,0,0,255), Color(255,255,255,255), plypf)
+	
+		
+		--if self.gameinprogress then
+		--	for k,p in pairs(team.GetPlayers(TEAM_HUMANS)) do
+		--		timer.Simple(2, function() self:PickColor(p) end)
+		--	end
+		--end
+	--end
 end
 
 function WARE:Initialize()
 	GAMEMODE:SetWinAwards( AWARD_MOVES )
-	
-	GAMEMODE:SetWareWindupAndLength(3, 16)
 
+	self.targetbumps = math.ceil(math.random(2,5))
+	
+	GAMEMODE:SetWareWindupAndLength(4, 4*self.targetbumps)
+
+	
 	GAMEMODE:SetPlayersInitialStatus( true )
-	GAMEMODE:DrawInstructions( "Keep bumping, to the correct color!" )
-	local plypf = RecipientFilter()
-	plypf:RemoveAllPlayers()
-	plypf:AddPlayer(team.GetPlayers(TEAM_HUMANS)[1])
-	GAMEMODE:DrawInstructions( "Yoshi is a big dumb dumb", Color(0,0,0,255), Color(255,255,255,255), plypf)
+	GAMEMODE:DrawInstructions( "Bump to the correct color " .. self.targetbumps .. " times!" )
 	
 	--TEST
 	GAMEMODE:HookTriggers()
@@ -61,10 +93,19 @@ function WARE:Initialize()
 		GAMEMODE:MakeAppearEffect(ent:GetPos())
 	end
 	
-	timer.Simple(2, 
+	timer.Simple(1,
+		function()
+			for k,p in pairs(team.GetPlayers(TEAM_HUMANS)) do
+				p.successfulbumps = 0
+				p.keepbouncing =  "Start Bouncing!"
+				self:PickColor(p)
+			end
+		end
+	)
+	
+	timer.Simple(4, 
 		function() 
-			self.gameinprogress = true
-			self:PickColor()
+			self.IsActive = true
 		end
 	)
 	
@@ -80,73 +121,89 @@ function WARE:StartAction()
 end
 
 function WARE:EndAction()
+	for _,v in pairs(team.GetPlayers(TEAM_HUMANS)) do
+		if v.successfulbumps >= self.targetbumps then
+			v:ApplyWin()
+			v:StripWeapons()
+		end
+	end
+	self.IsActive = false
 	self.gameinprogress = false
 end
 
 function WARE:Think( )
-	for _,ply in pairs(team.GetPlayers(TEAM_HUMANS)) do
-		if !GAMEMODE:PhaseIsPrelude() and !ply:GetLocked() then
-			local ent = ply:GetGroundEntity()
-			--if ent == GetWorldEntity() then
-			if ent == game.GetWorld() then
-				ply:ApplyLose()
-				ply:SimulateDeath()-- Vector(0, 0, -1) * 10^3 )
-				--ply:EjectWeapons( Vector(0, 0, 1) * 100, 120)
+	if self.IsActive then
+		for _,ply in pairs(team.GetPlayers(TEAM_HUMANS)) do
+			if !GAMEMODE:PhaseIsPrelude() and !ply:GetLocked() then
+				local ent = ply:GetGroundEntity()
+				--if ent == GetWorldEntity() then
+				if ent == game.GetWorld() then
+					ply:ApplyLose()
+					ply:SimulateDeath()-- Vector(0, 0, -1) * 10^3 )
+					--ply:EjectWeapons( Vector(0, 0, 1) * 100, 120)
+				end
+				
+				
 			end
-			
-			
 		end
-	end
-
-	if (CurTime() < (self.LastThinkDo + 0.05)) then return end
-	self.LastThinkDo = CurTime()
 	
-	for k,ring in pairs(self.Circles) do
-		local sphere = ents.FindInSphere(ring:GetPos(),self.CircleRadius)
+		if (CurTime() < (self.LastThinkDo + 0.05)) then return end
+		self.LastThinkDo = CurTime()
 		
-		for _,target in pairs(sphere) do			
-			if (target:IsPlayer() and target:IsWarePlayer()) or ( target:GetClass() == "swent_crowbar" ) then
-				if (CurTime() > (ring.LastActTime + 0.15)) then
-				
-					ring.LastActTime = CurTime()
-					if target:IsPlayer() and target:IsWarePlayer() and !target:GetLocked() then
-						if !(ring.colorid == self.targetcolorid) then
-							target:ApplyLose()
-							target:SimulateDeath()
-						end
-						
-						ring:EmitSound("ambient/levels/labs/electric_explosion1.wav")
-						
-						local effectdata = EffectData( )
-							effectdata:SetOrigin( ring:GetPos( ) )
-							effectdata:SetNormal( Vector(0,0,1) )
-						util.Effect( "waveexplo", effectdata, true, true )
-					end
+		for k,ring in pairs(self.Circles) do
+			local sphere = ents.FindInSphere(ring:GetPos(),self.CircleRadius)
+			
+			for _,target in pairs(sphere) do			
+				if (target:IsPlayer() and target:IsWarePlayer()) or ( target:GetClass() == "swent_crowbar" ) then
+					if (CurTime() > (ring.LastActTime + 0.15)) then
 					
-					if (target:IsPlayer() == false) then
-						target:EmitSound("weapons/flame_thrower_airblast_rocket_redirect.wav")
-						target:GetPhysicsObject():ApplyForceCenter(ring:GetPos():GetNormalized() * 10000)
-						
-						if ((target.Deflected or false) == false) then
-							target.Deflected = true
-							local trail_entity = util.SpriteTrail( target,  --Entity
-																	0,  --iAttachmentID
-																	Color( 255, 255, 255, 255 ),  --Color
-																	false, -- bAdditive
-																	8, --fStartWidth
-																	0, --fEndWidth
-																	0.2, --fLifetime
-																	1 / ((0.7+1.2) * 0.5), --fTextureRes
-																	"trails/tube.vmt" ) --strTexture
+						ring.LastActTime = CurTime()
+						if target:IsPlayer() and target:IsWarePlayer() and !target:GetLocked() then
+							if (ring.colorid == target.oldcolorid) then
+								GAMEMODE:DrawInstructions( "You have bounced: " .. target.successfulbumps .. " times! " .. target.keepbouncing .. " Goto color: " .. self.ColorNames[target.targetcolorid], self.Colors[target.targetcolorid], Color(255,255,255,255), {target} )
+							elseif !(ring.colorid == target.targetcolorid) then
+								target:ApplyLose()
+								target:SimulateDeath()
+							else
+								target.oldcolorid = target.targetcolorid
+								target.successfulbumps = target.successfulbumps + 1
+								if target.successfulbumps < self.targetbumps then target.keepbouncing =  "Keep Bouncing!" else target.keepbouncing =  "Stay Alive!" end
+								self:PickColor(target)
+							end
+							
+							ring:EmitSound("ambient/levels/labs/electric_explosion1.wav")
+							
+							local effectdata = EffectData( )
+								effectdata:SetOrigin( ring:GetPos( ) )
+								effectdata:SetNormal( Vector(0,0,1) )
+							util.Effect( "waveexplo", effectdata, true, true )
 						end
 						
-						
-					else
-						target:SetGroundEntity( NULL )
-						--target:SetVelocity(target:GetVelocity()*(-1) + (target:GetPos() + Vector(0,0,32) - ring:GetPos()):Normalize() * 500)
-						target:SetVelocity(target:GetVelocity()*(-1) + (target:GetPos() + Vector(0,0,32) - ring:GetPos()):GetNormalized() * 500)
+						if (target:IsPlayer() == false) then
+							target:EmitSound("weapons/flame_thrower_airblast_rocket_redirect.wav")
+							target:GetPhysicsObject():ApplyForceCenter(ring:GetPos():GetNormalized() * 10000)
+							
+							if ((target.Deflected or false) == false) then
+								target.Deflected = true
+								local trail_entity = util.SpriteTrail( target,  --Entity
+																		0,  --iAttachmentID
+																		Color( 255, 255, 255, 255 ),  --Color
+																		false, -- bAdditive
+																		8, --fStartWidth
+																		0, --fEndWidth
+																		0.2, --fLifetime
+																		1 / ((0.7+1.2) * 0.5), --fTextureRes
+																		"trails/tube.vmt" ) --strTexture
+							end
+							
+							
+						else
+							target:SetGroundEntity( NULL )
+							--target:SetVelocity(target:GetVelocity()*(-1) + (target:GetPos() + Vector(0,0,32) - ring:GetPos()):Normalize() * 500)
+							target:SetVelocity(target:GetVelocity()*(-1) + (target:GetPos() + Vector(0,0,32) - ring:GetPos()):GetNormalized() * 500)
+						end
+					
 					end
-				
 				end
 			end
 		end
