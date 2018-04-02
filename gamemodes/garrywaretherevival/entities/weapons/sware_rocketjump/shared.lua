@@ -63,12 +63,12 @@ function SWEP:PrimaryAttack()
 	
 	timer.Simple(math.Clamp(self.Owner:GetShootPos():Distance(self.OHS+Vector(0.01,0.01,0.01))/1000,0.01,100), function()
 		for _,ent in pairs(team.GetPlayers(TEAM_HUMANS)) do
-			if ent:GetPos():Distance(self.OHS) <= 80 then
+			if 1 then--ent:GetPos():Distance(self.OHS) <= 80 then
 				ent:SetGroundEntity( NULL )
 				if ent == self.Owner then
-				self.DoVel = (ent:GetPos() - self.OHS)*Vector(10,10,10)
+				self.DoVel = (ent:GetPos() - self.OHS)*Vector(10,10,10)/math.Clamp((ent:GetPos():Distance(self.OHS)/80.5)^10,1,1000000)
 				else
-				self.DoVel = (ent:GetPos() - self.OHS)*Vector(100,100,10)
+				self.DoVel = (ent:GetPos() - self.OHS)*Vector(100,100,10)/math.Clamp((ent:GetPos():Distance(self.OHS)/80.5)^10,1,1000000)
 				end
 				ent:SetVelocity(self.DoVel)
 			end
