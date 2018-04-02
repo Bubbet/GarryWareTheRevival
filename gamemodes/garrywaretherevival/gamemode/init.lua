@@ -116,10 +116,15 @@ end
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
 -- Ware cycles.
-concommand.Add("gw_infinite", function(ply, stringargs, args)
-	GAMEMODE.GameLength = (9.0 + 47.0 / 60.0)*(1-args[1])+args[1]*1000000000 
-	GAMEMODE.RoundLength = (5.0 * 60.0)*(1-args[1])+args[1]*1000000000
-end)
+concommand.Add("gw_infinite", 
+	function(ply, stringargs, args)
+		GAMEMODE.GameLength = (9.0 + 47.0 / 60.0)*(1-args[1])+args[1]*1000000000 
+		GAMEMODE.RoundLength = (5.0 * 60.0)*(1-args[1])+args[1]*1000000000
+	end,
+	function() return "gw_infinite" end,
+	"Infinite Mode",
+	FCVAR_CHEAT
+)
 concommand.Add("gw_pickgame", 
 	function(ply, cmd, args)
 		print("Changing Minigame To: " .. args[1])
@@ -141,7 +146,8 @@ concommand.Add("gw_pickgame",
 		end
 		return tbl
 	end,
-	"Used to force-change current garryware minigame. Usage: gw_pickgame warename"
+	"Used to force-change current garryware minigame. Usage: gw_pickgame warename",
+	FCVAR_CHEAT
 )
 function GM:PickGame(Game)
 	
