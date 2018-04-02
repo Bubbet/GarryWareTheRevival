@@ -1,5 +1,9 @@
 WARE = {}
-WARE.Author = "Hurricaaane (Ha3)"
+WARE.Author = "Hurricaaane (Ha3)" --Edited by Brutal Yoshi, for custom spawn pools.
+WARE.Npcclassic = {"npc_manhack" , "npc_rollermine"}
+WARE.Npczomb = {"npc_zombie" , "npc_fastzombie"}
+WARE.Npcheadcrab = {"npc_headcrab" , "npc_headcrab_fast"}
+WARE.Npcpool = {WARE.Npcclassic , WARE.Npczomb , WARE.Npcheadcrab}
 WARE.Room = "hexaprism"
 
 WARE.Models = {
@@ -14,7 +18,8 @@ function WARE:GetModelList()
 	return self.Models
 end
 
-local possiblenpcs = { "npc_manhack" , "npc_rollermine" , "npc_antlionguard" , "npc_manhack" , "npc_rollermine"  , "npc_manhack" , "npc_rollermine"  , "npc_manhack" , "npc_rollermine"  }
+
+
 
 function WARE:FlashSpawns( iteration, delay )
 	for k,pos in pairs( self.Positions ) do
@@ -27,6 +32,7 @@ function WARE:FlashSpawns( iteration, delay )
 end
 
 function WARE:Initialize()
+	possiblenpcs = self.Npcpool[math.ceil(math.random(1,#self.Npcpool))]
 	GAMEMODE:EnableFirstFailAward( )
 	GAMEMODE:SetFailAwards( AWARD_VICTIM )
 	self.SpawnedNPCs = {}
@@ -45,7 +51,7 @@ function WARE:Initialize()
 	self.zlimit = pitposz + (aposz - pitposz) * 0.8
 	
 	local ratio = 0.7
-	local minimum = 3
+	local minimum = 4
 	local num = math.Clamp(math.ceil( team.NumPlayers(TEAM_HUMANS) * ratio) , minimum, 64)
 	
 	self.Positions = {}
