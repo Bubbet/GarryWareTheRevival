@@ -1,21 +1,25 @@
 module( "modifier_mod", package.seeall )
 
 
-local modifierStringList = {"singleplayer", "floorislava", "superspeed", "superslow", "lowgravity", "slappers"}
+local modifierStringList = {"singleplayer", "floorislava", "superspeed", "superslow", "lowgravity", "slappers", "randomfov"}
 	--modifier_mod.ModifierCheck(name)
 	--WARE.ModifierDeny = {"singleplayer"}
 
 local minigame = nil -- the current minigame
+local env = nil -- the current enviroment
 local currentModifier = nil -- number represending the current modifier in the modifierStringList
 local modifierDeny = nil -- an array of denied modifiers for the current minigame
 
 function ModifierCheck(name)
-	minigame = ware_mod.Get(name)
 	modifierDeny = minigame.ModifierDeny
 	if modifierDeny == nil then
 		return true
 	else
 		return !list.Contains(modifierDeny, currentModifier)
+		if !list.Contains(modifierDeny, currentModifier) then 	
+			minigame = ware_mod.Get(name)
+			env = env_mod.FindEnviroment(Minigame.name)
+		end
 	end
 end
 
