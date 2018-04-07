@@ -28,6 +28,7 @@ include("modules/pon.lua")
 include("modules/minigames_module.lua")
 include("modules/environment_module.lua")
 include("modules/entitymap_module.lua")
+include("modules/modifier_module.lua")
 
 include( "sv_filelist.lua" )
 include( "sv_warehandy.lua" )
