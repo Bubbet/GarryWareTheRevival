@@ -17,15 +17,10 @@ GM.Website 	= ""
 DeriveGamemode( "fretta13" )
 IncludePlayerClasses()
 
-GM.Help		= 
+GM.Help		=
 [[Rules :
-- Do what she says
 - Have fun, this is not a game where you have to kill everyone
-- My Little Coding: LUA Is Magic
-By : Hurricaaane (Ha3 Team)
-
-Music by The Hamster Alliance ( http://www.hamsteralliance.com/ ).
-Special thanks to Kilburn for developing the modular shape of the gamemode.]]
+]]
 
 GM.TeamBased = true
 GM.AllowAutoTeam = true
@@ -68,7 +63,7 @@ function GM:CreateTeams()
 	team.SetUp( TEAM_HUMANS, "Warers", Color( 235, 177, 20 ), true )
 	team.SetSpawnPoint( TEAM_HUMANS, "info_player_start" )
 	team.SetClass( TEAM_HUMANS, { "Default" } )
-	
+
 	team.SetUp( TEAM_SPECTATOR, "Spectators", Color( 200, 200, 200 ), true )
 	team.SetSpawnPoint( TEAM_SPECTATOR, "info_player_start" )
 	team.SetClass( TEAM_SPECTATOR, { "Spectator" } )
@@ -77,13 +72,13 @@ end
 
 function GM:GetBaseColorPtr( sColorname )
 	if (GAMEMODE.WACOLS[sColorname] == nil) then return GAMEMODE.WACOLS["unknown"] end
-	
+
 	return GAMEMODE.WACOLS[sColorname]
 end
 
 function GM:Initialize()
 	self.BaseClass:Initialize()
-	
+
 	// Precaches and adds all sounds to the sound list
 	for k,v in pairs (GAMEMODE.WASND) do
 		for k2,v2 in pairs (v) do

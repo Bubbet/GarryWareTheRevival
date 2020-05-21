@@ -23,9 +23,9 @@ function WARE:StartAction()
 	local contrast = self.Concolors[self.colorindex]
 	local drawtype 
 	if self.minigametype == 1 then
-		drawtype = "Type the text: "
+		drawtype = "Type the following text: "
 	else
-		drawtype = "Type the color: "
+		drawtype = "Type the color of the text: "
 	end
 		
 	GAMEMODE:DrawInstructions( drawtype ..self.pickcolor , contrast , textcolor)
